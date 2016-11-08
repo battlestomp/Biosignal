@@ -346,13 +346,13 @@ def plotmfdfa(filenme):
     plot(hq, Dq, "o-")
 def figure1():
     #plotfile("../data/S001.txt")
-    filenme = "../data/S001.txt"
+    filenme = "../../data/S001.txt"
     plotmfdfa(filenme)
-    filenme = "../data/S003.txt"
+    filenme = "../../data/S003.txt"
     plotmfdfa(filenme)
-    filenme = "../data/Z001.txt"
+    filenme = "../../data/Z001.txt"
     plotmfdfa(filenme)
-    filenme = "../data/Z002.txt"
+    filenme = "../../data/Z002.txt"
     plotmfdfa(filenme)
     xlabel('$h_q$', fontsize=20); 
     ylabel('$D_q$', fontsize=20)
@@ -372,7 +372,7 @@ def figure1():
 
 def figure0_1():
     noise = []
-    filenme = "../data/Z001.txt"
+    filenme = "../../data/Z001.txt"
     fpN = open(filenme)
     for line in fpN:
         noise.append(int(line))
@@ -408,7 +408,7 @@ def show_fits(scales,Fq):
     ylabel('$F_q$', fontsize=20)
 def figure0_2():
     noise = []
-    filenme = "../data/Z001.txt"
+    filenme = "../../data/Z001.txt"
     fpN = open(filenme)
     for line in fpN:
         noise.append(int(line))
@@ -429,7 +429,7 @@ def figure0_2():
 
 def figure0_3():
     noise = []
-    filenme = "../data/Z001.txt"
+    filenme = "../../data/Z001.txt"
     fpN = open(filenme)
     for line in fpN:
         noise.append(int(line))
@@ -442,12 +442,40 @@ def figure0_3():
     plot(hq, Dq, "o-")
     xlabel('$h_q$', fontsize=20); ylabel('$D_q$', fontsize=20)
     show()
+
+def plotmfdfa2(filenme):
+    noise = []
+    fpN = open(filenme)
+    for line in fpN:
+        strlist = line.split(",")
+        noise.append(float(strlist[0]))
+    whitenoise = array(noise);
+    qstep = 4
+    qs = arange(-5,5.01,1.0/qstep)
+    scstep = 8
+    scales = floor(2.0**arange(4,10.1,1.0/scstep)).astype('i4')
+    print scales[0]
+    Fq, Hq, hq, tq, Dq = MDFA(whitenoise.ravel(),scales,qs)
+    plot(hq, Dq, "o-")
+    
+def figure0_4():
+    noise = []
+    filenme1 = "../../data/Data_F_Ind0001.txt"
+    filenme2 = "../../data/Data_F_Ind0002.txt"
+    filenme3 = "../../data/Data_N_Ind0001.txt"
+    filenme4 = "../../data/Data_N_Ind0018.txt"
+    plotmfdfa2(filenme1)
+    plotmfdfa2(filenme2)
+    plotmfdfa2(filenme3)
+    plotmfdfa2(filenme4)
+    xlabel('$h_q$', fontsize=20); ylabel('$D_q$', fontsize=20)
+    show()
 if __name__ == "__main__":
     from numpy import *
     from pylab import *
     import os
     
-    figure1()
+    figure0_4()
 
 
     

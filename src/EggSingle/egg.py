@@ -334,10 +334,11 @@ def demo():
 
 def FeasturesExtraction(orginfile):
     noise = []
-    fpN = open(orginfile)
-    for line in fpN:
-        noise.append(int(line))
-    whitenoise = array(noise);
+    #fpN = open(orginfile)
+    #for line in fpN:
+    #    noise.append(int(line))
+    whitenoise = np.loadtxt(orginfile, delimiter=',', usecols=(0,), dtype=float)
+    #whitenoise = array(noise);
     qstep = 4
     qs = arange(-5,5.01,1.0/qstep)
     scstep = 8
@@ -358,8 +359,7 @@ if __name__ == "__main__":
     from numpy import *
     from pylab import *
     import os
-    
-    demo()
+    print FeasturesExtraction("../../data/Data_F_50/Data_F_Ind0045.txt")
 
 
     
