@@ -9,6 +9,9 @@ import numpy as np
 from numpy import float32, float16
 from sklearn import svm
 
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+
 from svmutil import *
 
 
@@ -93,7 +96,7 @@ def SenAndSpe(ty, pv):
     SPC = (TN)*1.0/(TN+FP)
     return SEN, SPC, ACC
 
-if __name__ == '__main__':
+def SVMmain():
     pe1 = readdata("../../data/F_features.txt") 
     ne1 = readdata("../../data/N_features.txt") 
     pe2 = readdata("../../data/DataF_features.txt") 
@@ -108,5 +111,24 @@ if __name__ == '__main__':
     svm_save_model("svm.txt", m)
     print evaluations(ty, p_label);
     print SenAndSpe(ty, p_label);
+
+def Boostmain():
+    pe1 = readdata("../../data/F_features.txt") 
+    ne1 = readdata("../../data/N_features.txt") 
+    pe2 = readdata("../../data/DataF_features.txt") 
+    ne2 = readdata("../../data/DataN_features.txt") 
+    pe = mergeList(pe1, pe2)
+    ne = mergeList(ne1, ne2)
+    sx, sy, tx, ty = randomdata(pe, ne)
+    print sx
+    #ry, rx = readtraindata()
+    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1),
+                         algorithm="SAMME",
+                         n_estimators=200)
+    bdt.fit(sy, sx)
+    print bdt.predict(tx)
+
+if __name__ == '__main__':
+    Boostmain()
     
     pass
