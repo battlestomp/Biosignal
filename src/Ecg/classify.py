@@ -51,7 +51,7 @@ def LoadFeatures():
     np.random.shuffle(all_data)
     return all_data
 
-def classify():
+def classify(sx, sy, tx, ty):
     classifiers = [
                    #KNeighborsClassifier(3),
                    #SVC(kernel="linear", C=0.025),
@@ -68,25 +68,35 @@ def classify():
         clf.fit(sx, sy)
         py = clf.predict(tx)
         return accuracy_score(ty, py)
+
+sx, sy, tx, ty = GetData(0.8)
+def resetx(sx, tx, subarray):
+    csx = np.delete(sx, subarray, 1)
+    ctx = np.delete(tx, subarray, 1)
+    return csx, ctx
     
 def eval_func(chromosome):
-   score = 0.0
-   # iterate over the chromosome
-   for value in chromosome:
-      if value == 0:
-         score += 0.1   
-   return score
+    subarray = []
+    icout = 0
+    for value in chromosome:
+        if value == 0:
+            subarray.append(icout)
+        icout = icout + 1
+    csx, ctx = resetx(sx, tx, subarray)
+    sorce = classify(csx, sy, ctx, ty)
+    print sorce
+    return sorce
 def ga():
-    sx, sy, tx, ty = GetData(0.8)
     genome = G1DBinaryString.G1DBinaryString(sx.shape[1])
     genome.evaluator.set(eval_func)
     genome.mutator.set(Mutators.G1DBinaryStringMutatorFlip)
     ga = GSimpleGA.GSimpleGA(genome)
     ga.selector.set(Selectors.GTournamentSelector)
-    ga.setGenerations(100)
+    ga.setGenerations(10)
     ga.evolve(freq_stats=10)
     best = ga.bestIndividual()
     print best
+    print eval_func(best)
     
 if __name__ == '__main__':
     ga()
