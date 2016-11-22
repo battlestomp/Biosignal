@@ -19,11 +19,13 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import accuracy_score
+from sklearn.decomposition import PCA
 
 from pyevolve import G1DBinaryString
 from pyevolve import GSimpleGA
 from pyevolve import Selectors
 from pyevolve import Mutators
+from sklearn.lda import LDA
 
 
 def GetData(ratio):
@@ -33,14 +35,17 @@ def GetData(ratio):
     p_y = all_data[:, -1]
     p_x = all_data[:, :-1]
     
+#    pca=PCA(30)
+#    p_x = pca.fit_transform(p_x)
+
     sx = p_x[:s_len]
     sy = p_y[:s_len]
     tx = p_x[s_len:]
     ty = p_y[s_len:]
     return sx, sy, tx, ty
 def LoadFeatures():
-    file_pe = "../../data/features/data_F_result1EMD.txt"
-    file_ne = "../../data/features/data_N_result1EMD.txt"
+    file_pe = "../../data/features/data_F_result1EMDfft.txt"
+    file_ne = "../../data/features/data_N_result1EMDfft.txt"
     pe_x = np.loadtxt(fname=file_pe, dtype=float, delimiter=",", unpack=False)
     ne_x = np.loadtxt(fname=file_ne, dtype=float, delimiter=",", unpack=False)
     pe_y = np.ones((pe_x.shape[0],1))
@@ -51,23 +56,12 @@ def LoadFeatures():
     np.random.shuffle(all_data)
     return all_data
 
+
 def classify(sx, sy, tx, ty):
-    classifiers = [
-                   #KNeighborsClassifier(3),
-                   #SVC(kernel="linear", C=0.025),
-                   #SVC(gamma=2, C=1),
-                   #####GaussianProcessClassifier(1.0 * RBF(1.0), warm_start=True),
-                   #DecisionTreeClassifier(max_depth=5),
-                   #RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
-                   #MLPClassifier(alpha=1),
-                   AdaBoostClassifier(),
-                   #GaussianNB(),
-                   #QuadraticDiscriminantAnalysis()
-                   ]
-    for clf in classifiers:
-        clf.fit(sx, sy)
-        py = clf.predict(tx)
-        return accuracy_score(ty, py)
+    clf = LDA()
+    clf.fit(sx, sy)
+    py = clf.predict(tx)
+    return accuracy_score(ty, py)
 
 sx, sy, tx, ty = GetData(0.8)
 def resetx(sx, tx, subarray):
@@ -92,12 +86,32 @@ def ga():
     genome.mutator.set(Mutators.G1DBinaryStringMutatorFlip)
     ga = GSimpleGA.GSimpleGA(genome)
     ga.selector.set(Selectors.GTournamentSelector)
-    ga.setGenerations(10)
+    ga.setGenerations(20)
     ga.evolve(freq_stats=10)
     best = ga.bestIndividual()
     print best
-    print eval_func(best)
-    
+    #print eval_func(best)
+
+def multi_classifier():
+    classifiers = [
+                   KNeighborsClassifier(4),
+                   SVC(kernel="linear", C=0.025),
+                   SVC(),
+                   #####GaussianProcessClassifier(1.0 * RBF(1.0), warm_start=True),
+                   #DecisionTreeClassifier(max_depth=7),
+                   #RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+                   #RandomForestClassifier(),
+                   LDA(),
+                   AdaBoostClassifier(),
+                   #GaussianNB(),
+                   #QuadraticDiscriminantAnalysis()
+                   ]
+    for clf in classifiers:
+        clf.fit(sx, sy)
+        py = clf.predict(tx)
+        print accuracy_score(ty, py)
 if __name__ == '__main__':
-    ga()
+    #ga()
+    print multi_classifier()
+    #print sx.shape
     pass

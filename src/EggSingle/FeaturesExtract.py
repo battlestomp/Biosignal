@@ -21,12 +21,24 @@ class FeaturesExtract:
     def sgnMatrix(self, farray):
         farray[farray>0] = 1
         farray[farray<0] = 0
-
+    def GetFFTbyStep(self, farry, steparray):
+        resultlist = []
+        sp = np.abs(np.fft.rfft(farry)/farry.shape[0])
+        for step in steparray:
+            resultlist.append(np.mean(sp[step[0]:step[1]]))
+        return np.array(resultlist)
+    
+    def GetFFTMax(self, farry, steparray):
+        resultlist = []
+        sp = np.abs(np.fft.rfft(farry)/farry.shape[0])
+        for step in steparray:
+            resultlist.append(np.max(sp[step[0]:step[1]]))
+        return np.array(resultlist)
+    
 if __name__ == "__main__":
-    fe = FeaturesExtract()
-    temp = np.arange(5)
-    print np.sum(abs(temp[1:]) - abs(temp[:-1]))
-    print temp.shape[0]
+    testlist = [1,2,3,4]
+    for i in range(0, len(testlist), 2):
+         print i
     pass
 
 
