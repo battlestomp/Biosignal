@@ -2,6 +2,7 @@
 import numpy as np
 from numpy import array
 from theano.scalar.basic import sgn
+import nolds
 
 class FeaturesExtract:
     def __init__(self):
@@ -21,13 +22,18 @@ class FeaturesExtract:
     def sgnMatrix(self, farray):
         farray[farray>0] = 1
         farray[farray<0] = 0
+    def GetEntropy(self, farry):
+        resultlist = []
+        resultlist.append(nolds.sampen(farry))
+        resultlist.append(nolds.lyap_r(farry))
+        resultlist.append(nolds.hurst_rs(farry))
+        resultlist.append(nolds.dfa(farry))
     def GetFFTbyStep(self, farry, steparray):
         resultlist = []
         sp = np.abs(np.fft.rfft(farry)/farry.shape[0])
         for step in steparray:
             resultlist.append(np.mean(sp[step[0]:step[1]]))
         return np.array(resultlist)
-    
     def GetFFTMax(self, farry, steparray):
         resultlist = []
         sp = np.abs(np.fft.rfft(farry)/farry.shape[0])
